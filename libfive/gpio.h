@@ -1,7 +1,5 @@
 #pragma once
 
-#include "bits.h"
-
 void gpio_set_output(unsigned pin);
 void gpio_set_input(unsigned pin);
 void gpio_write(unsigned pin, unsigned val);
