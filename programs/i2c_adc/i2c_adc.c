@@ -6,25 +6,6 @@
 #include "libfive/gpio.h"
 #include "libfive/timer.h"
 
-#define LED_RED 22
-#define LED_GREEN 19
-#define LED_BLUE 21
-
-void rgb_setup() {
-    gpio_set_output(LED_RED);
-    gpio_set_output(LED_GREEN);
-    gpio_set_output(LED_BLUE);
-    gpio_set_xor(LED_RED, 1);
-    gpio_set_xor(LED_GREEN, 1);
-    gpio_set_xor(LED_BLUE, 1);
-}
-
-void set_rgb(unsigned r, unsigned g, unsigned b) {
-    gpio_write(LED_RED, r);
-    gpio_write(LED_GREEN, g);
-    gpio_write(LED_BLUE, b);
-}
-
 enum { conversion_reg = 0, config_reg = 1 };
 
 static void ads1115_reset() {
@@ -53,10 +34,10 @@ static uint16_t ads1115_read16(uint8_t dev_addr, uint8_t reg) {
 #define DR(x) ((x) << 5)
 #define MUX(x) ((x) << 12)
 
-#define MODE_V(x) bits_get(x, 8, 8)   // ((x) >> 8)&1)
-#define DR_V(x) bits_get(x, 5, 7)     // (((x)>>5)&0b111)
-#define PGA_V(x) bits_get(x, 9, 11)   // (((x)>>9)&0b111)
-#define MUX_V(x) bits_get(x, 12, 14)  // (((x)>>12)&0b111)
+#define MODE_V(x) bits_get(x, 8, 8)
+#define DR_V(x) bits_get(x, 5, 7)
+#define PGA_V(x) bits_get(x, 9, 11)
+#define MUX_V(x) bits_get(x, 12, 14)
 
 static uint8_t ads1115_config() {
     enum { dev_addr = 0b1001000 };
@@ -81,7 +62,6 @@ static uint8_t ads1115_config() {
 
 int main() {
     i2c_setup(100000, 13, 12);
-    rgb_setup();
 
     delay_us(20);
 
@@ -95,4 +75,3 @@ int main() {
 
     return 0;
 }
-
