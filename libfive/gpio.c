@@ -1,5 +1,5 @@
-#include "bits.h"
 #include "gpio.h"
+#include "bits.h"
 
 typedef struct {
     unsigned input_val;
@@ -16,8 +16,8 @@ typedef struct {
     unsigned high_ip;
     unsigned low_ie;
     unsigned low_ip;
-    unsigned _0;
-    unsigned _1;
+    unsigned iof_en;
+    unsigned iof_sel;
     unsigned out_xor;
 } gpio_reg_t;
 
@@ -43,4 +43,18 @@ void gpio_set_xor(unsigned pin, unsigned val) {
 
 unsigned gpio_read(unsigned pin) {
     return bit_get(gpio->input_val, pin);
+}
+
+void gpio_configure(unsigned pin, gpio_iof_t mode) {
+    switch (mode) {
+        case GPIO_PWM:
+            gpio->iof_en = bit_set(gpio->iof_en, pin);
+            gpio->iof_sel = bit_set(gpio->iof_en, pin);
+            break;
+        case GPIO_SPI:
+        case GPIO_I2C:
+            gpio->iof_en = bit_set(gpio->iof_en, pin);
+            gpio->iof_sel = bit_clr(gpio->iof_sel, pin);
+            break;
+    }
 }
