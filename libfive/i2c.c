@@ -1,8 +1,6 @@
 #include "i2c.h"
 #include "bits.h"
 #include "gpio.h"
-#include "mem.h"
-#include "uart.h"
 
 typedef struct {
     // Clock prescale low
@@ -108,7 +106,7 @@ static void send_addr(uint8_t addr, int write) {
     }
 }
 
-int i2c_read(uint8_t dev, volatile uint8_t* bytes, size_t num) {
+int i2c_read(uint8_t dev, uint8_t* bytes, size_t num) {
     if (num == 0) {
         return 0;
     }
@@ -129,7 +127,7 @@ int i2c_read(uint8_t dev, volatile uint8_t* bytes, size_t num) {
     return 0;
 }
 
-int i2c_write(uint8_t dev, volatile uint8_t* bytes, size_t num, int rstart) {
+int i2c_write(uint8_t dev, uint8_t* bytes, size_t num, int rstart) {
     send_addr(dev, 1);
     if (bit_get(i2c->cr_sr, SR_ACK) == 1) {
         return -1;

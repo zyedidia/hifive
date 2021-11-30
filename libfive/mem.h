@@ -23,4 +23,3 @@ static inline void put8(volatile void* addr, uint8_t v) {
     *((volatile uint8_t*) addr) = v;
     asm volatile("fence rw,rw");
 }
-
