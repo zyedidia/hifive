@@ -29,7 +29,7 @@ enum { conversion_reg = 0, config_reg = 1 };
 
 static void ads1115_reset() {
     uint8_t rst = 0x6;
-    i2c_write(0, &rst, 1);
+    i2c_write(0, &rst, 1, 0);
 }
 
 static void ads1115_write16(uint8_t dev_addr, uint8_t reg, uint16_t v) {
@@ -37,13 +37,12 @@ static void ads1115_write16(uint8_t dev_addr, uint8_t reg, uint16_t v) {
     data[0] = reg;
     data[1] = v >> 8;
     data[2] = v & 0xff;
-    i2c_write(dev_addr, data, 3);
+    i2c_write(dev_addr, data, 3, 0);
 }
 
 // read a 16-bit register
 static uint16_t ads1115_read16(uint8_t dev_addr, uint8_t reg) {
-    i2c_write(dev_addr, &reg, 1);
-    delay_us(50);
+    i2c_write(dev_addr, &reg, 1, 1);
     uint8_t data[2];
     i2c_read(dev_addr, data, 2);
     return (data[0] << 8) | data[1];

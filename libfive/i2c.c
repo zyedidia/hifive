@@ -129,7 +129,7 @@ int i2c_read(uint8_t dev, volatile uint8_t* bytes, size_t num) {
     return 0;
 }
 
-int i2c_write(uint8_t dev, volatile uint8_t* bytes, size_t num) {
+int i2c_write(uint8_t dev, volatile uint8_t* bytes, size_t num, int rstart) {
     send_addr(dev, 1);
     if (bit_get(i2c->cr_sr, SR_ACK) == 1) {
         return -1;
@@ -140,6 +140,8 @@ int i2c_write(uint8_t dev, volatile uint8_t* bytes, size_t num) {
             return -1;
         }
     }
-    i2c_stop();
+    if (!rstart) {
+        i2c_stop();
+    }
     return 0;
 }
