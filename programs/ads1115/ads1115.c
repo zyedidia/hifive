@@ -1,10 +1,6 @@
 #include <stdint.h>
 
-#include "libfive/uart.h"
-#include "libfive/bits.h"
-#include "libfive/i2c.h"
-#include "libfive/gpio.h"
-#include "libfive/timer.h"
+#include "libfive/libfive.h"
 
 enum { conversion_reg = 0, config_reg = 1 };
 
@@ -29,15 +25,9 @@ static uint16_t ads1115_read16(uint8_t dev_addr, uint8_t reg) {
     return (data[0] << 8) | data[1];
 }
 
-#define PGA(x) ((x) << (9))
-#define MODE(x) ((x) << (8))
-#define DR(x) ((x) << 5)
-#define MUX(x) ((x) << 12)
-
 #define MODE_V(x) bits_get(x, 8, 8)
 #define DR_V(x) bits_get(x, 5, 7)
 #define PGA_V(x) bits_get(x, 9, 11)
-#define MUX_V(x) bits_get(x, 12, 14)
 
 static uint8_t ads1115_config() {
     enum { dev_addr = 0b1001000 };
@@ -48,12 +38,15 @@ static uint8_t ads1115_config() {
 
     uint16_t c = ads1115_read16(dev_addr, config_reg);
 
-    printf("config: %x\n", c);
+    if (!(MODE_V(c) == 1 && DR_V(c) == 0b100 && PGA_V(c) == 0b010)) {
+        printf("ERROR: config has incorrect default value: %x\n", c);
+        halt();
+    }
 
-    c = bits_set(c, 8, 8, 0);
-    c = bits_set(c, 5, 7, 0b111);
-    c = bits_set(c, 9, 11, 0b001);
-    c = bits_set(c, 12, 14, 0b100);
+    c = bits_set(c, 8, 8, 0); // MODE
+    c = bits_set(c, 5, 7, 0b111); // DR
+    c = bits_set(c, 9, 11, 0b001); // PGA
+    c = bits_set(c, 12, 14, 0b100); // MUX
 
     ads1115_write16(dev_addr, config_reg, c);
 

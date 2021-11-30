@@ -25,7 +25,7 @@ int uart_can_putc() {
 
 // p needed for compatibility with tinyprintf
 void uart_putc(void* p, char c) {
-    (void) p;
+    (void) p; // ignore
     while (!uart_can_putc())
         ;
     uart_0->txdata = c;

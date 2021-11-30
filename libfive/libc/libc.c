@@ -90,32 +90,6 @@ static inline size_t newgap(size_t gap) {
     return gap;
 }
 
-void qsort(void* base,
-           size_t nmemb,
-           size_t size,
-           int (*compar)(const void*, const void*)) {
-    size_t gap = nmemb;
-    size_t i, j;
-    char *p1, *p2;
-    int swapped;
-
-    if (!nmemb)
-        return;
-
-    do {
-        gap = newgap(gap);
-        swapped = 0;
-
-        for (i = 0, p1 = base; i < nmemb - gap; i++, p1 += size) {
-            j = i + gap;
-            if (compar(p1, p2 = (char*) base + j * size) > 0) {
-                memswap(p1, p2, size);
-                swapped = 1;
-            }
-        }
-    } while (gap > 1 || swapped);
-}
-
 int strcmp(const char* a, const char* b) {
     while (1) {
         unsigned char ac = *a, bc = *b;
