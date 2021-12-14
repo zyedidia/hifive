@@ -2,8 +2,10 @@
 
 #include "mem.h"
 
+#define TIMER_ADDR 0x200BFF8
+
 static unsigned read_ticks() {
-    return get32((const volatile void*) 0x200BFF8);
+    return get32((const volatile void*) TIMER_ADDR);
 }
 
 static unsigned read_us(void) {
@@ -21,7 +23,15 @@ static unsigned read_s(void) {
     return u / 32768;
 }
 
+#ifdef RVSYM
+#include "rvsym.h"
+#endif
 static void delay_us(unsigned us) {
+#ifdef RVSYM
+    rvsym_elapse_us(us);
+    return;
+#endif
+
     unsigned rb = read_us();
     while (1) {
         unsigned ra = read_us();

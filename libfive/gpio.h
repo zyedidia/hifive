@@ -6,6 +6,7 @@ typedef enum {
     GPIO_I2C,
 } gpio_iof_t;
 
+void gpio_init();
 void gpio_set_output(unsigned pin);
 void gpio_set_input(unsigned pin);
 void gpio_write(unsigned pin, unsigned val);

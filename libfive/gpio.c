@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "gpio.h"
 #include "bits.h"
 
@@ -22,6 +24,14 @@ typedef struct {
 } gpio_reg_t;
 
 static volatile gpio_reg_t* const gpio = (gpio_reg_t*) 0x10012000;
+
+#ifdef RVSYM
+#include "rvsym.h"
+void gpio_init() {
+    memset((void*) gpio, 0, sizeof(gpio_reg_t));
+    rvsym_mark_output(gpio, sizeof(gpio_reg_t), "gpio");
+}
+#endif
 
 void gpio_set_output(unsigned pin) {
     gpio->output_en = bit_set(gpio->output_en, pin);

@@ -1,4 +1,6 @@
 #include "uart.h"
+#include "gpio.h"
+#include "timer.h"
 
 extern int main();
 
@@ -21,7 +23,15 @@ void _cstart() {
         *bss++ = 0;
     }
 
+#ifdef RVSYM
+    gpio_init();
+#endif
+
     init_printf(NULL, uart_putc);
 
     main();
+
+#ifdef RVSYM
+    rvsym_quiet_exit();
+#endif
 }

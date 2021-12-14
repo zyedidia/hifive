@@ -9,11 +9,18 @@ OBJCOPY=$(PREFIX)-objcopy
 OBJDUMP=$(PREFIX)-objdump
 
 INCLUDE=-I$(LIBFIVE_ROOT)/..
+
+ifdef RVSYM
+ARCH=rv32im
+CFLAGS += -DRVSYM
+INCLUDE += -I$(RVSYM_ROOT)/include
+else
 ARCH=rv32imac
+endif
 
 O ?= 2
 
-CFLAGS=-O$(O) $(INCLUDE) -g -Wall -Wno-unused-function -nostdlib -nostartfiles -ffreestanding -march=$(ARCH) -mabi=ilp32 -std=gnu99 -mcmodel=medany
+CFLAGS += -O$(O) $(INCLUDE) -g -Wall -Wno-unused-function -nostdlib -nostartfiles -ffreestanding -march=$(ARCH) -mabi=ilp32 -std=gnu99 -mcmodel=medany
 ASFLAGS=-march=$(ARCH) -mabi=ilp32
 LDFLAGS=-T $(LIBFIVE_ROOT)/memmap.ld -L$(RV_ROOT)/$(PREFIX)/lib/$(ARCH)/ilp32 -L$(RV_ROOT)/lib/gcc/$(PREFIX)/11.1.0/$(ARCH)/ilp32 -melf32lriscv
 LDLIBS=-lgcc
