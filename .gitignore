@@ -3,3 +3,5 @@
 *.list
 *.bin
 *.hex
+*.out
+*.s
