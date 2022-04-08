@@ -33,6 +33,10 @@ void gpio_set_input(unsigned pin) {
     gpio->input_en = bit_set(gpio->input_en, pin);
 }
 
+void gpio_set_pullup(unsigned pin) {
+    gpio->pue = bit_set(gpio->pue, pin);
+}
+
 void gpio_write(unsigned pin, unsigned val) {
     gpio->output_val = bit_assign(gpio->output_val, pin, val);
 }

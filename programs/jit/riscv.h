@@ -76,8 +76,11 @@ static inline uint32_t riscv_ret() {
 }
 
 static inline int riscv_li(uint32_t rd, uint32_t imm, uint32_t* code) {
-    code[0] = riscv_lui(rd, bits_get(imm, 12, 31)+1);
-    uint32_t rdval = (bits_get(imm, 12, 31)+1) << 12;
-    code[1] = riscv_addi(rd, rd, imm - rdval);
+    if (bit_get(imm, 11) == 1) {
+        code[0] = riscv_lui(rd, ~bits_get(imm, 12, 31));
+    } else {
+        code[0] = riscv_lui(rd, bits_get(imm, 12, 31));
+    }
+    code[1] = riscv_xori(rd, rd, bits_get(imm, 0, 11));
     return 2;
 }
