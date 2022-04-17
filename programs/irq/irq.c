@@ -3,7 +3,7 @@
 #include "libfive/gpio.h"
 #include "libfive/riscv_csr.h"
 
-#define PIN 20
+#define PIN 23
 
 void __attribute__((interrupt, aligned(16))) irq_handler() {
     if (gpio_irq_fall(PIN)) {
