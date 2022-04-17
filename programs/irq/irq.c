@@ -3,16 +3,20 @@
 #include "libfive/gpio.h"
 #include "libfive/riscv_csr.h"
 
+#define PIN 20
+
 void __attribute__((interrupt, aligned(16))) irq_handler() {
-    printf("interrupt %ld %d %d\n", read_csr(mcause) & 0xffff, gpio_irq_fall(23), gpio_irq_rise(23));
-    gpio_irq_clear(23);
-    printf("%d\n", gpio_irq_rise(23));
+    if (gpio_irq_fall(PIN)) {
+        printf("fall\n");
+    } else if (gpio_irq_rise(PIN)) {
+        printf("rise\n");
+    }
+    gpio_irq_clear(PIN);
     plic_claim_clear();
-    printf("%d\n", gpio_irq_rise(23));
 }
 
 int main() {
-    unsigned pin = 23; // pin marked '7'
+    unsigned pin = PIN; // pin marked '4'
 
     plic_init();
     plic_enable(gpio_irq_num(pin));

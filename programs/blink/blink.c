@@ -1,8 +1,8 @@
 #include "libfive/gpio.h"
 #include "libfive/timer.h"
 
-// connect to the pin marked '7'
-#define LED_PIN 23
+// connect to the pin marked '4'
+#define LED_PIN 20
 
 int main() {
     gpio_set_output(LED_PIN);
