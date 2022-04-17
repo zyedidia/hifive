@@ -1,31 +1,27 @@
 #pragma once
 
+#include "cpu.h"
 #include "mem.h"
 
 static unsigned read_ticks() {
     return get32((const volatile void*) 0x200BFF8);
 }
 
-static unsigned read_us(void) {
-    unsigned u = read_ticks();
-    return u * 31;
-}
-
-static unsigned read_ms(void) {
-    unsigned u = read_ticks();
-    return u / 32;
-}
-
-static unsigned read_s(void) {
-    unsigned u = read_ticks();
-    return u / 32768;
+static void delay_ticks(unsigned ticks) {
+    unsigned rb = read_ticks();
+    while (1) {
+        unsigned ra = read_ticks();
+        if ((ra - rb) >= ticks) {
+            break;
+        }
+    }
 }
 
 static void delay_us(unsigned us) {
-    unsigned rb = read_us();
+    unsigned rb = read_ticks();
     while (1) {
-        unsigned ra = read_us();
-        if ((ra - rb) >= us) {
+        unsigned ra = read_ticks();
+        if (((ra - rb) * CPU_FREQ / (1000 * 1000)) >= us) {
             break;
         }
     }

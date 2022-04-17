@@ -62,3 +62,25 @@ void gpio_configure(unsigned pin, gpio_iof_t mode) {
             break;
     }
 }
+
+unsigned gpio_irq_num(unsigned pin) {
+    return pin + 8;
+}
+
+void gpio_enable_irq(unsigned pin) {
+    gpio->fall_ie = bit_set(gpio->fall_ie, pin);
+    gpio->rise_ie = bit_set(gpio->rise_ie, pin);
+}
+
+bool gpio_irq_fall(unsigned pin) {
+    return bit_get(gpio->fall_ip, pin) == 1;
+}
+
+bool gpio_irq_rise(unsigned pin) {
+    return bit_get(gpio->rise_ip, pin) == 1;
+}
+
+void gpio_irq_clear(unsigned pin) {
+    gpio->rise_ip = bit_set(gpio->rise_ip, pin);
+    gpio->fall_ip = bit_set(gpio->fall_ip, pin);
+}

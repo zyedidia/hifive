@@ -1,4 +1,5 @@
 #include "uart.h"
+#include "cpu.h"
 
 extern int main();
 
@@ -21,7 +22,8 @@ void _cstart() {
         *bss++ = 0;
     }
 
-    init_printf(NULL, uart_putc);
+    cpu_clock_init();
+    uart_init(115200);
 
     main();
 }

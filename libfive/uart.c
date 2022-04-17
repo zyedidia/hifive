@@ -1,5 +1,6 @@
 #include "uart.h"
 #include "bits.h"
+#include "cpu.h"
 
 #include "libc/tinyprintf.h"
 
@@ -18,6 +19,11 @@ typedef enum {
 } uart_txdata_t;
 
 static volatile uart_reg_t* const uart_0 = (uart_reg_t*) 0x10013000;
+
+void uart_init(unsigned baud) {
+    uart_0->div = (CPU_FREQ + baud/2)/baud - 1;
+    init_printf(NULL, uart_putc);
+}
 
 int uart_can_putc() {
     return bit_get(uart_0->txdata, TXDATA_FULL) == 0;
