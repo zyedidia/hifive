@@ -47,6 +47,10 @@ static inline uint32_t riscv_ori(uint32_t rd, uint32_t rs1, uint32_t imm) {
     return 0b0010011 | (rd << 7) | (0b110 << 12) | (rs1 << 15) | (imm << 20);
 }
 
+static inline uint32_t riscv_xori(uint32_t rd, uint32_t rs1, uint32_t imm) {
+    return 0b0010011 | (rd << 7) | (0b100 << 12) | (rs1 << 15) | (imm << 20);
+}
+
 static inline uint32_t riscv_auipc(uint32_t rd, uint32_t imm) {
     return 0b0010111 | (rd << 7) | (imm << 12); 
 }

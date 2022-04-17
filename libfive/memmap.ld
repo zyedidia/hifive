@@ -25,6 +25,7 @@ SECTIONS {
   .rodata : {
     *(.rodata*)
     *(.srodata*)
+    *(.eh*)
   } >flash AT>flash
 
   . = ALIGN(4);

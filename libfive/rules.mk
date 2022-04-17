@@ -9,9 +9,9 @@ OBJCOPY=$(PREFIX)-objcopy
 OBJDUMP=$(PREFIX)-objdump
 
 INCLUDE=-I$(LIBFIVE_ROOT)/..
-ARCH=rv32im
+ARCH=rv32imac
 
-O ?= 2
+O ?= s
 
 CFLAGS=-O$(O) $(INCLUDE) -g -Wall -Wno-unused-function -nostdlib -nostartfiles -ffreestanding -march=$(ARCH) -mabi=ilp32 -std=gnu99 -mcmodel=medany
 ASFLAGS=-march=$(ARCH) -mabi=ilp32

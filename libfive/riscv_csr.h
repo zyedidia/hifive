@@ -1,9 +1,5 @@
 #pragma once
 
-#define CSR_MRF 0x345
-#define CSR_MTRF 0x346
-#define CSR_MPRF 0x347
-
 #define write_csr(reg, val) _write_csr(reg, val)
 #define read_csr(reg) _read_csr(reg)
 
