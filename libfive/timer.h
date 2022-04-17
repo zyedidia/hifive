@@ -2,9 +2,10 @@
 
 #include "cpu.h"
 #include "mem.h"
+#include "riscv_csr.h"
 
 static unsigned read_ticks() {
-    return get32((const volatile void*) 0x200BFF8);
+    return read_csr(mcycle);
 }
 
 static void delay_ticks(unsigned ticks) {
@@ -21,7 +22,7 @@ static void delay_us(unsigned us) {
     unsigned rb = read_ticks();
     while (1) {
         unsigned ra = read_ticks();
-        if (((ra - rb) * CPU_FREQ / (1000 * 1000)) >= us) {
+        if ((ra - rb) >= us * (CPU_FREQ / (1000 * 1000))) {
             break;
         }
     }

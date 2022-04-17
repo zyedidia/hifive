@@ -34,8 +34,6 @@ void cpu_clock_init() {
     // PLLBYPASS_I = 0 : Enables PLL
     PLLCFG = cfg_temp;
 
-    delay_ticks(1000);
-
     while ((PLLCFG & (1 << PLLLOCK_I)) == 0) {} // Wait until PLL locks
     PLLCFG |= 1 << PLLSEL_I;          // Let PLL drive hfclk
 }
