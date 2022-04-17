@@ -16,9 +16,9 @@ void int7() { count += 7; }
 typedef void (*intfn_t)();
 
 #define BENCH(call) \
-{ int og_tx = read_ticks(); \
+{ int og_tx = read_cycles(); \
     for (int _i = 0; _i < 10000; _i++) {call;} \
-  printf("ticks: %d\n", read_ticks() - og_tx); }
+  printf("ticks: %d\n", read_cycles() - og_tx); }
 
 void slow(intfn_t* fns, int n) {
     for (int i = 0; i < n; i++) {
