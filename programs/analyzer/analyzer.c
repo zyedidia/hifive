@@ -16,19 +16,22 @@ typedef struct {
 static volatile unsigned* const gpio_input_val = (unsigned*) 0x10012000;
 
 static inline unsigned gpio_read_fast(unsigned pin) {
-    return bit_get(*gpio_input_val, pin);
+    return *gpio_input_val;
 }
 
 unsigned analyze(event_t* events, size_t N) {
     unsigned n = 0;
     while (n < N) {
         unsigned v1, v0 = gpio_read_fast(PIN);
-        while ((v1 = gpio_read_fast(PIN)) == v0) {}
         unsigned time = read_csr(mcycle);
-        events[n++] = (event_t){
+        while ((v1 = gpio_read_fast(PIN)) == v0) {
+            time = read_csr(mcycle);
+        }
+        events[n] = (event_t){
             .ncycles = time,
-            .v = v1,
+            .v = bit_get(v1, PIN),
         };
+        n += bit_get(v1, PIN) != bit_get(v0, PIN);
         v0 = v1;
     }
     return n;
@@ -64,6 +67,9 @@ unsigned analyze_no_br(event_t* events, size_t N) {
     return n;
 }
 
+#define NREAD 1024
+unsigned readings[NREAD];
+
 unsigned analyze_inner(event_t* events, size_t N) {
     unsigned n = 0;
 
@@ -78,10 +84,8 @@ unsigned analyze_inner(event_t* events, size_t N) {
     };
     v0 = v1;
 
-#define NREAD 1024
-    unsigned readings[NREAD];
-    unsigned* start = readings;
-    const unsigned* end = readings + NREAD;
+    register unsigned* start = readings;
+    const register unsigned* end = readings + NREAD;
 
     while (n < N) {
         unsigned before = read_csr(mcycle);
@@ -105,7 +109,7 @@ unsigned analyze_inner(event_t* events, size_t N) {
     return n;
 }
 
-#define N 8
+#define N 11
 
 static int abs(int i) {
     if (i < 0) {
@@ -114,27 +118,35 @@ static int abs(int i) {
     return i;
 }
 
+static unsigned ns_to_pi(unsigned ns) {
+    return ns * 700 / 1000;
+}
+
+static unsigned cyc_to_ns(unsigned cyc) {
+    return cyc * 1000 / CPU_FREQ_MHZ;
+}
+
 int main() {
     gpio_set_input(PIN);
 
     event_t events[N];
 
     while (1) {
-        unsigned n = analyze_no_br(events, N);
+        unsigned n = analyze(events, N);
 
         printf("%d results\n", n);
 
         unsigned start = events[0].ncycles;
         int toterr = 0;
         for (int i = 0; i < n; i++) {
-            unsigned got = (events[i].ncycles - start) * 1000 / CPU_FREQ_MHZ;
+            unsigned got = cyc_to_ns(events[i].ncycles - start);
             unsigned want = i * 6000 * 1000 / 700;
             int err = abs((int) (want - got));
             toterr += err;
-            printf("got: %d ns, (err %d ns, toterr %d ns)\n", (events[i].ncycles - start) * 1000 / CPU_FREQ_MHZ, err, toterr);
+            printf("%d: got: %d ns, (err %d ns, toterr %d ns) (%d pi cycles)\n", events[i].v, got, err, toterr, ns_to_pi(got));
         }
 
-        printf("toterr: %d pi cycles\n", toterr * 700 / 1000);
+        printf("toterr: %d pi cycles\n", ns_to_pi(toterr));
 
         delay_ms(100);
 

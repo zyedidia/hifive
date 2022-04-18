@@ -3,7 +3,7 @@
 #include "bits.h"
 
 static volatile unsigned* const plic_priority = (unsigned*) 0x0C000004;
-static volatile unsigned* const plic_pending = (unsigned*) 0x0C001000;
+/* static volatile unsigned* const plic_pending = (unsigned*) 0x0C001000; */
 static volatile unsigned* const plic_enables = (unsigned*) 0x0C002000;
 static volatile unsigned* const plic_threshold = (unsigned*) 0x0C200000;
 static volatile unsigned* const plic_claim = (unsigned*) 0x0C200004;
